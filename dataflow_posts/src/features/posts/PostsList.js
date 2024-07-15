@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { selectAllPosts, getPostsError, fetchPosts, getPostStatus } from "./postsSlice";
+import { selectPostIds, getPostsError, fetchPosts, getPostStatus } from "./postsSlice";
 import React, { useEffect } from 'react';
 import PostsExcerpt from "./PostsExcerpt";
 
@@ -8,7 +8,7 @@ const PostsList = () => {
 
   const postStatus = useSelector(getPostStatus);
   const postError = useSelector(getPostsError);
-  const posts = useSelector(selectAllPosts);
+  const orderedPostIds = useSelector(selectPostIds)
 
   useEffect(() => {
     if (postStatus === 'idle') {
@@ -20,15 +20,13 @@ const PostsList = () => {
   if (postStatus === 'loading') {
     content = <p>Loading...</p>;
   } else if (postStatus === 'succeeded') {
-    const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
-    content = orderedPosts.map(post => <PostsExcerpt key={post.id} post={post} />);
+      content = orderedPostIds.map(postId => <PostsExcerpt key={postId} postId={postId} />)
   } else if (postStatus === 'failed') {
     content = <p>{postError}</p>;
   }
 
   return (
     <section>
-      <h2>Posts</h2>
       {content}
     </section>
   );
